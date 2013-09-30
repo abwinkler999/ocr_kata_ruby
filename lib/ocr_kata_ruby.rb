@@ -19,11 +19,14 @@ class Check_Set
 		@check_file_lines = IO.readlines(check_file_path)
 	end
 
-	def subdivide_into_checks
+	def subdivide_file_into_checks
 		@check_file_lines.each_slice(4).to_a.each { |x| 
 			temp_check = Check.new
 			temp_check.lines = x
-			temp_check.digits[0] = [x[0][0..2], x[1][0..2], x[2][0..2]].join
+			[0, 3, 6, 9, 12, 15, 18, 21, 24].each { |digit_pos|
+				temp_check.digits << [x[0][digit_pos, 3], x[1][digit_pos, 3], x[2][digit_pos, 3]].join
+			}
+			# there's got to be a way to dry this out
 			@checks << temp_check
 		}
 
