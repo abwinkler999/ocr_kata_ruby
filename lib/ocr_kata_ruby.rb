@@ -20,8 +20,13 @@ class Check_Set
 	end
 
 	def subdivide_into_checks
-		@checks = @check_file_lines.each_slice(4).to_a
-		# this subdivides into 11 arrays of 4 lines each
+		@check_file_lines.each_slice(4).to_a.each { |x| 
+			temp_check = Check.new
+			temp_check.lines = x
+			temp_check.digits[0] = [x[0][0..2], x[1][0..2], x[2][0..2]].join
+			@checks << temp_check
+		}
+
 	end
 
 end

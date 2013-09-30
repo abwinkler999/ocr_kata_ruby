@@ -3,12 +3,21 @@ require 'ocr_kata_ruby'
 describe Check_Set do
 	before(:each) do
 		@check_file_path = File.new("lib/checks.txt")
+		subject.read_checks(@check_file_path)
 	end
 
-	it "can read an entry from a text file containing one check" do
-		subject.read_checks(@check_file_path)
-		subject.check_file.length.should == 4
+	it "can read in check entries from a text file" do
+		subject.check_file_lines.length.should == 44
 	end
-	
+
+	it "can subdivide a text file into separate checks" do
+		subject.subdivide_into_checks
+		subject.checks.length.should == 11
+	end
+
+	it "can subdivide a check into separate digits" do
+		subject.subdivide_into_checks
+		subject.checks[0].digits[0].should == " _ | ||_|"
+	end
 
 end
