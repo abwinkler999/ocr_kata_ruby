@@ -17,14 +17,21 @@ describe Check_Set do
 
 	it "can subdivide a check into separate digits" do
 		subject.subdivide_file_into_checks
-		subject.checks[0].digits[0].should == " _ | ||_|"
-		subject.checks[0].digits.length.should == 9
+		subject.checks[0].raw_digits[0].should == " _ | ||_|"
+		subject.checks[0].raw_digits.length.should == 9
 	end
 
 
 	it "can identify a digit under ideal conditions" do
-		#subject.subdivide_into_checks
-		#subject.checks[0].digits[0]
+		subject.subdivide_file_into_checks
+		subject.checks[0].digits[0].should == 0
 	end
+
+	it "can OCR an entire check under ideal conditions" do
+		subject.subdivide_file_into_checks
+		subject.checks[0].digits.join.should == "000000000"
+		subject.checks[10].digits.join.should == "123456789"
+	end
+
 
 end
