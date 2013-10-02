@@ -47,5 +47,9 @@ describe Check_File do
         subject.entries[11].checksum_valid?.should == true
       end
     end
+
+    it "can report whether it is an erroneous account number" do
+      subject.entries[10].report.should == "123456789 ERR"
+    end
   end
 end

@@ -12,7 +12,16 @@ class Check
     8.downto(0) { |x|
       checksum += (digits[x] * (9 - x))
     }
+    puts checksum
     return ((checksum % 11) == 0)
+  end
+
+  def report
+    output_line = digits.join.to_s
+    if !checksum_valid? 
+      output_line += " ERR"
+    end
+    return output_line
   end
 end
 
