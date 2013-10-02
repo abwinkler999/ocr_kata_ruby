@@ -1,10 +1,18 @@
 class Check
-  attr_accessor :raw_digits, :digits, :lines
+  attr_accessor :raw_digit_blocks, :digits, :lines
 
   def initialize
-    @raw_digits = []
+    @raw_digit_blocks = []
     @digits = []
     @lines = []
+  end
+
+  def checksum_valid?
+    checksum = 0
+    8.downto(0) { |x|
+      checksum += (digits[x] * (9 - x))
+    }
+    return ((checksum % 11) == 0)
   end
 end
 
@@ -16,7 +24,7 @@ class Check_File
     @entries = []
   end
 
-  def read_checks(check_file_path)
+  def read_check_file(check_file_path)
     @check_file_lines = IO.readlines(check_file_path)
   end
 
@@ -24,18 +32,17 @@ class Check_File
     @check_file_lines.each_slice(4).to_a.each { |x| 
       temp_check = Check.new
       temp_check.lines = x
-      #puts {"hi "+ "there"}
       for digit_number in 0..8
-        line_position = digit_number * 3
-        temp_check.raw_digits << [x[0][line_position, 3], x[1][line_position, 3], x[2][line_position, 3]].join
-        temp_check.digits << match_digit([x[0][line_position, 3], x[1][line_position, 3], x[2][line_position, 3]].join)
+        read_at = digit_number * 3
+        temp_check.raw_digit_blocks << [x[0][read_at, 3], x[1][read_at, 3], x[2][read_at, 3]].join
+        temp_check.digits << identify_digit(temp_check.raw_digit_blocks[digit_number])
       end
       @entries << temp_check
     }
+    # to do: refactor this with "step" method
   end
 
-
-  def match_digit(candidate)
+  def identify_digit(candidate)
     case candidate
     when " _ | ||_|"
       return 0
