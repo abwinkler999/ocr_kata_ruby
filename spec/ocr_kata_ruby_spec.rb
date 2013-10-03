@@ -29,28 +29,26 @@ describe Accounts_File do
     end
 
     it "can identify a digit under ideal conditions" do
-      subject.entries[0].digits[0].should == 0
+      subject.entries[0].identified_digits[0].should == 0
     end
 
     it "can identify an entire account number under ideal conditions" do
-      subject.entries[10].digits.join.should == "123456789"
+      subject.entries[10].identified_digits.join.should == "123456789"
     end
 
-    context "an individual entry" do
-      it "can identify when an entry has an invalid checksum" do
-        subject.entries[1].checksum_valid?.should == false
-      end
+    it "can identify when an entry has an invalid checksum" do
+      subject.entries[1].checksum_valid?.should == false
+    end
 
-      it "can identify when an entry has a valid checksum" do
-        subject.entries[11].checksum_valid?.should == true
-      end
-      it "can report whether it is an erroneous account number" do
-        subject.entries[9].report.should == "999999999 ERR"
-      end
+    it "can identify when an entry has a valid checksum" do
+      subject.entries[11].checksum_valid?.should == true
+    end
+    it "can report whether it is an erroneous account number" do
+      subject.entries[9].report.should == "999999999 ERR"
+    end
 
-      it "can report whether it is an illegible account number" do
-        subject.entries[12].report.should == "88888888? ILL"
-      end
+    it "can report whether it is an illegible account number" do
+      subject.entries[12].report.should == "88888888? ILL"
     end
   end
 end
