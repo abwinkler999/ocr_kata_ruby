@@ -1,4 +1,4 @@
-class Check
+class Entry
   attr_accessor :raw_digit_blocks, :digits, :lines
 
   def initialize
@@ -12,43 +12,43 @@ class Check
     8.downto(0) { |x|
       checksum += (digits[x] * (9 - x))
     }
-    puts checksum
     return ((checksum % 11) == 0)
   end
 
   def report
     output_line = digits.join.to_s
-    if !checksum_valid? 
+    if digits.include?("?")
+      output_line += " ILL"
+    elsif !checksum_valid? 
       output_line += " ERR"
     end
     return output_line
   end
 end
 
-class Check_File
-  attr_accessor :check_file_lines, :entries
+class Accounts_File
+  attr_accessor :accounts_file_lines, :entries
 
   def initialize
-    @check_file_lines = []
+    @accounts_file_lines = []
     @entries = []
   end
 
-  def read_check_file(check_file_path)
-    @check_file_lines = IO.readlines(check_file_path)
+  def read_accounts_file(accounts_file_path)
+    @accounts_file_lines = IO.readlines(accounts_file_path)
   end
 
-  def subdivide_file_into_checks
-    @check_file_lines.each_slice(4).to_a.each { |x| 
-      temp_check = Check.new
-      temp_check.lines = x
+  def subdivide_file_into_entries
+    @accounts_file_lines.each_slice(4).to_a.each { |x| 
+      temp_entry = Entry.new
+      temp_entry.lines = x
       for digit_number in 0..8
         read_at = digit_number * 3
-        temp_check.raw_digit_blocks << [x[0][read_at, 3], x[1][read_at, 3], x[2][read_at, 3]].join
-        temp_check.digits << identify_digit(temp_check.raw_digit_blocks[digit_number])
+        temp_entry.raw_digit_blocks << [x[0][read_at, 3], x[1][read_at, 3], x[2][read_at, 3]].join
+        temp_entry.digits << identify_digit(temp_entry.raw_digit_blocks[digit_number])
       end
-      @entries << temp_check
+      @entries << temp_entry
     }
-    # to do: refactor this with "step" method
   end
 
   def identify_digit(candidate)
@@ -74,7 +74,7 @@ class Check_File
     when " _ |_| _|"
       return 9
     else
-      return -1
+      return "?"
     end
   end
 
