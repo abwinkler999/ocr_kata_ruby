@@ -1,3 +1,7 @@
+LINESET_LENGTH = 4
+NUMBER_OF_DIGITS = 9
+DIGIT_WIDTH = 3
+
 class Entry
   attr_accessor :raw_digit_blocks, :identified_digits, :lines
 
@@ -9,10 +13,10 @@ class Entry
 
   def checksum_valid?
     checksum = 0
-    8.downto(0) { |x|
-      checksum += (identified_digits[x] * (9 - x))
+    (NUMBER_OF_DIGITS-1).downto(0) { |current_digit|
+      checksum += (identified_digits[current_digit] * (9 - current_digit))
     }
-    return ((checksum % 11) == 0)
+    ((checksum % 11) == 0)
   end
 
   def report
@@ -22,7 +26,7 @@ class Entry
     elsif !checksum_valid? 
       output_line += " ERR"
     end
-    return output_line
+    output_line
   end
 end
 
@@ -38,13 +42,21 @@ class AccountsFile
     @accounts_file_lines = IO.readlines(accounts_file_path)
   end
 
+  def isolate_raw_digit_blocks(lineset, cursor_position)
+    raw_digit_block = []
+    for line in 0..2
+      raw_digit_block << lineset[line][cursor_position, DIGIT_WIDTH]
+    end
+    raw_digit_block.join
+  end
+
   def subdivide_file_into_entries
-    @accounts_file_lines.each_slice(4).to_a.each { |x| 
+    @accounts_file_lines.each_slice(LINESET_LENGTH).to_a.each { |lineset| 
       temp_entry = Entry.new
-      temp_entry.lines = x
-      for digit_number in 0..8
-        read_at = digit_number * 3
-        temp_entry.raw_digit_blocks << [x[0][read_at, 3], x[1][read_at, 3], x[2][read_at, 3]].join
+      temp_entry.lines = lineset
+      for digit_number in 0..(NUMBER_OF_DIGITS-1)
+        cursor_position = digit_number * DIGIT_WIDTH
+        temp_entry.raw_digit_blocks << isolate_raw_digit_blocks(lineset, cursor_position)
         temp_entry.identified_digits << identify_digit(temp_entry.raw_digit_blocks[digit_number])
       end
       @entries << temp_entry
@@ -97,5 +109,4 @@ class AccountsFile
       return "?"
     end
   end
-
 end
