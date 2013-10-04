@@ -7,5 +7,7 @@ This is an implementation of the Bank OCR Kata, in Ruby.
 Included is accounts.txt, a sample input file with entries containing all
 digits, and covering valid, invalid, and illegible account numbers.
 
+This implementation satisfies user stories 1, 2, and 3.
+
 - Benjamin Winkler
   @abwinkler999

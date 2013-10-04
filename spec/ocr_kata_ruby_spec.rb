@@ -1,4 +1,5 @@
-require 'ocr_kata_ruby'
+require 'accounts_file'
+require 'entry'
 
 FILE_LENGTH = 20
 NUMBER_OF_ENTRIES = 5
