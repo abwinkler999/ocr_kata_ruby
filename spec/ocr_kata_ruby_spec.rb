@@ -1,13 +1,17 @@
 require 'ocr_kata_ruby'
 
-describe Accounts_File do
+FILE_LENGTH = 20
+NUMBER_OF_ENTRIES = 5
+DIGIT_SEGMENTS = 9
+
+describe AccountsFile do
   before(:each) do
     @accounts_file_path = File.new("lib/accounts.txt")
     subject.read_accounts_file(@accounts_file_path)
   end
 
   it "can read in account number entries from a text file" do
-    subject.accounts_file_lines.length.should == 52
+    subject.accounts_file_lines.length.should == FILE_LENGTH
   end
 
 
@@ -17,15 +21,17 @@ describe Accounts_File do
     end
 
     it "can subdivide a text file into separate account numbers" do
-      subject.entries.length.should == 13
+      subject.entries.length.should == NUMBER_OF_ENTRIES
     end
 
     it "can subdivide an account number into nine separate digit positions" do
-      subject.entries[0].raw_digit_blocks.length.should == 9
+      subject.entries[0].raw_digit_blocks.length.should == DIGIT_SEGMENTS
     end
 
     it "can correctly read in a digit in a digit position" do
-      subject.entries[0].raw_digit_blocks[0].should == " _ | ||_|"
+      subject.entries[0].raw_digit_blocks[0].should == " _ " +
+                                                       "| |" +
+                                                       "|_|"
     end
 
     it "can identify a digit under ideal conditions" do
@@ -33,22 +39,22 @@ describe Accounts_File do
     end
 
     it "can identify an entire account number under ideal conditions" do
-      subject.entries[10].identified_digits.join.should == "123456789"
+      subject.entries[1].identified_digits.join.should == "123456789"
     end
 
     it "can identify when an entry has an invalid checksum" do
-      subject.entries[1].checksum_valid?.should == false
+      subject.entries[2].checksum_valid?.should == false
     end
 
     it "can identify when an entry has a valid checksum" do
-      subject.entries[11].checksum_valid?.should == true
+      subject.entries[3].checksum_valid?.should == true
     end
     it "can report whether it is an erroneous account number" do
-      subject.entries[9].report.should == "999999999 ERR"
+      subject.entries[2].report.should == "999999999 ERR"
     end
 
     it "can report whether it is an illegible account number" do
-      subject.entries[12].report.should == "88888888? ILL"
+      subject.entries[4].report.should == "88888888? ILL"
     end
   end
 end

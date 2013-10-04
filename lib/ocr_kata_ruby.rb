@@ -26,7 +26,7 @@ class Entry
   end
 end
 
-class Accounts_File
+class AccountsFile
   attr_accessor :accounts_file_lines, :entries
 
   def initialize
