@@ -15,7 +15,6 @@ describe AccountsFile do
     subject.accounts_file_lines.length.should == FILE_LENGTH
   end
 
-
   context "an individual account number" do
     before(:each) do
       subject.subdivide_file_into_entries
@@ -50,12 +49,20 @@ describe AccountsFile do
     it "can identify when an entry has a valid checksum" do
       subject.entries[3].checksum_valid?.should == true
     end
+
     it "can report whether it is an erroneous account number" do
       subject.entries[2].report.should == "999999999 ERR"
     end
 
     it "can report whether it is an illegible account number" do
       subject.entries[4].report.should == "88888888? ILL"
+    end
+
+  end
+
+  context "an individual digit" do
+    it "can report all possibilities of a single read digit" do
+      subject.entries[0].identified_digits[0].alternatives.should == [0,8]
     end
   end
 end
